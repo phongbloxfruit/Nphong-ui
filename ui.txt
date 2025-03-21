@@ -1,0 +1,103 @@
+local CoreGui = game:GetService("CoreGui")
+local UserInputService = game:GetService("UserInputService")
+
+-- Xóa UI cũ nếu có
+if CoreGui:FindFirstChild("BananaHubUI") then
+    CoreGui:FindFirstChild("BananaHubUI"):Destroy()
+end
+
+-- Tạo ScreenGui
+local ScreenGui = Instance.new("ScreenGui", CoreGui)
+ScreenGui.Name = "BananaHubUI"
+
+-- Tạo khung menu chính (Màu nền chính)
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 500, 0, 300)
+MainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) -- Màu chính của UI
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+local UICorner = Instance.new("UICorner", MainFrame)
+UICorner.CornerRadius = UDim.new(0, 12)
+
+-- Hiệu ứng đổ bóng
+local Shadow = Instance.new("ImageLabel", MainFrame)
+Shadow.Size = UDim2.new(1, 20, 1, 20)
+Shadow.Position = UDim2.new(0, -10, 0, -10)
+Shadow.BackgroundTransparency = 1
+Shadow.Image = "rbxassetid://1316045217"
+Shadow.ImageTransparency = 0.5
+
+-- Thanh menu bên trái (Màu menu)
+local MenuFrame = Instance.new("Frame", MainFrame)
+MenuFrame.Size = UDim2.new(0, 120, 1, 0)
+MenuFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40) -- Màu menu
+
+local UIListLayout = Instance.new("UIListLayout", MenuFrame)
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Padding = UDim.new(0, 10)
+
+-- Khung nội dung hiển thị khi chọn tab
+local ContentFrame = Instance.new("Frame", MainFrame)
+ContentFrame.Size = UDim2.new(1, -120, 1, 0)
+ContentFrame.Position = UDim2.new(0, 120, 0, 0)
+ContentFrame.BackgroundTransparency = 1
+
+-- Nút đóng UI (Màu đỏ nổi bật)
+local CloseButton = Instance.new("TextButton", MainFrame)
+CloseButton.Size = UDim2.new(0, 40, 0, 40)
+CloseButton.Position = UDim2.new(1, -45, 0, 5)
+CloseButton.Text = "X"
+CloseButton.TextSize = 20
+CloseButton.Font = Enum.Font.SourceSansBold
+CloseButton.TextColor3 = Color3.fromRGB(255, 50, 50) -- Màu đỏ
+CloseButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+CloseButton.BorderSizePixel = 0
+
+local UICornerClose = Instance.new("UICorner", CloseButton)
+UICornerClose.CornerRadius = UDim.new(0, 10)
+
+CloseButton.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+-- Hàm tạo tab (Dùng hệ thống MakeTab từ file của bạn)
+function MakeTab(Configs)
+    local TabName = Configs.Name or "Tab"
+    
+    local Button = Instance.new("TextButton", MenuFrame)
+    Button.Size = UDim2.new(1, 0, 0, 40)
+    Button.Text = TabName
+    Button.Font = Enum.Font.SourceSansBold
+    Button.TextSize = 18
+    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Màu tab
+    Button.BorderSizePixel = 0
+
+    local UICornerBtn = Instance.new("UICorner", Button)
+    UICornerBtn.CornerRadius = UDim.new(0, 8)
+
+    local Page = Instance.new("Frame", ContentFrame)
+    Page.Size = UDim2.new(1, 0, 1, 0)
+    Page.BackgroundTransparency = 1
+    Page.Visible = false
+
+    Button.MouseButton1Click:Connect(function()
+        for _, child in pairs(ContentFrame:GetChildren()) do
+            child.Visible = false
+        end
+        Page.Visible = true
+    end)
+
+    return Page
+end
+
+-- Tạo tab dựa trên file của bạn
+local AutoFarmPage = MakeTab({ Name = "Auto Farm" })
+local TeleportPage = MakeTab({ Name = "Teleport" })
+local ESPPage = MakeTab({ Name = "ESP" })
+
+-- Mở tab đầu tiên mặc định
+AutoFarmPage.Visible = true
